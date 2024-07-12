@@ -1,0 +1,31 @@
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+li {
+        border: 1px solid #E5E7E9;
+        height: 30px; 
+        width: 30px;
+        background-color: #F4F6F6;
+        display: flex; /* Ajout pour centrer le contenu verticalement */
+        justify-content: center; /* Ajout pour centrer le contenu horizontalement */
+        align-items: center; /* Ajout pour centrer le contenu verticalement */
+        text-align: center; /* Ajout pour centrer le texte à l'intérieur du li */
+    }
+  }
+.popover-button {
+    background: none;
+    border: none;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+}
+
+
+
+
+
+  
