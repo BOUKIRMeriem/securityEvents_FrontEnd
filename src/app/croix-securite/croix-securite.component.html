@@ -17,7 +17,9 @@
                                             <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
                                                 [ngbPopover]="popOverContent"
                                                 [popoverTitle]="'Declaration accident/risque Jour-' + day"
-                                                [autoClose]="true" placement="bottom" class="popover-button">
+                                                [autoClose]="true"
+                                                [disabled]="isPastDay(day)"
+                                                placement="bottom" class="popover-button">
                                                 {{ day }}
                                             </button>
                                         </li>
@@ -30,7 +32,9 @@
                                             <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
                                                 [ngbPopover]="popOverContent"
                                                 [popoverTitle]="'Declaration accident/risque Jour-' + day"
-                                                [autoClose]="true" placement="bottom" class="popover-button">
+                                                [autoClose]="true"
+                                                [disabled]="isPastDay(day)"
+                                                placement="bottom" class="popover-button">
                                                 {{ day }}
                                             </button>
                                         </li>
@@ -57,7 +61,9 @@
                                         <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
                                             [ngbPopover]="popOverContent"
                                             [popoverTitle]="'Declaration accident/risque Jour-' + day"
-                                            [autoClose]="true" placement="bottom" class="popover-button">
+                                            [autoClose]="true" 
+                                            [disabled]="isPastDay(day)"
+                                            placement="bottom" class="popover-button">
                                             {{ day }}
                                         </button>
                                     </li>
@@ -70,7 +76,9 @@
                                         <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
                                             [ngbPopover]="popOverContent"
                                             [popoverTitle]="'Declaration accident/risque Jour-' + day"
-                                            [autoClose]="true" placement="bottom" class="popover-button">
+                                            [autoClose]="true"
+                                            [disabled]="isPastDay(day)"
+                                            placement="bottom" class="popover-button">
                                             {{ day }}
                                         </button>
                                     </li>
@@ -85,7 +93,9 @@
                                             <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
                                                 [ngbPopover]="popOverContent"
                                                 [popoverTitle]="'Declaration accident/risque Jour-' + day"
-                                                [autoClose]="true" placement="bottom" class="popover-button">
+                                                [autoClose]="true"
+                                                [disabled]="isPastDay(day)"
+                                                placement="bottom" class="popover-button">
                                                 {{ day }}
                                             </button>
                                         </li>
@@ -99,7 +109,9 @@
                                             <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
                                                 [ngbPopover]="popOverContent"
                                                 [popoverTitle]="'Declaration accident/risque Jour-' + day"
-                                                [autoClose]="true" placement="bottom" class="popover-button">
+                                                [autoClose]="true" 
+                                                [disabled]="isPastDay(day)"
+                                                placement="bottom" class="popover-button">
                                                 {{ day }}
                                             </button>
                                         </li>
@@ -144,7 +156,7 @@
                             <div class="col">
                                 <h6 class="card-title mb-0" style="color: #909497;">Nombre de jour(s) sans accident(s)
                                 </h6>
-                                <span class="h3 mb-0" style="color: #909497;">{{ daysSinceLastRed }}</span>
+                                <span class="h3 mb-0" style="color: #909497;">{{kpiData.daysBetween}}</span>
                             </div>
                             <div class="col-auto">
                                 <img src="assets/calendrier.png" alt="Icone de calendrier" style="width: 60px;">
@@ -160,7 +172,7 @@
                             <div class="col">
                                 <h6 class="card-title mb-0" style="color: #909497  ;">Record de jour(s) sans accident(s)
                                 </h6>
-                                <span class="h3 mb-0" style="color: #909497 ;">{{maxResult}}</span>
+                                <span class="h3 mb-0" style="color: #909497 ;">{{kpiData.record}}</span>
                             </div>
                             <div class="col-auto">
                                 <img src="assets/record-de-temps.png" alt="Icone de calendrier " style="width: 60px;">
@@ -169,6 +181,24 @@
                     </div>
                 </div>
             </div>
+            <div class="col-xl-3 col-lg-6 mb-4" style="width: 350px;">
+                <div class="card card-stats mb-4 mb-xl-0"
+                    style="border-radius: 10px 10px 10px 10px;border-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="card-title mb-0" style="color: #909497  ;">Dernière accident(s)
+                                </h6>
+                                <span class="h3 mb-0" style="color: #909497 ; font-size: 20px;">{{kpiData.lastAccident ? kpiData.lastAccident : '--'}}</span>
+                            </div>
+                            <div class="col-auto">
+                                <img src="assets/accident.png" alt="Icone de calendrier " style="width: 60px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
         </div>
     </div>
 </div>

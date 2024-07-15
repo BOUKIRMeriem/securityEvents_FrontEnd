@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import * as bootstrap from "bootstrap";
-import { CalendarService } from '../services/calendar.service'
+import * as bootstrap from 'bootstrap';
+import { CalendarService } from '../services/calendar.service';
 import { CalendarEvent } from '../models/events.model';
+import { kpi } from '../models/kpi.model';
 
 @Component({
   selector: 'app-calendar',
@@ -10,52 +11,44 @@ import { CalendarEvent } from '../models/events.model';
   styleUrls: ['./calendar.component.scss']
 })
 export class CalendarComponent implements OnInit {
-  datePipe: DatePipe = new DatePipe('en-us')
+  datePipe: DatePipe = new DatePipe('en-us');
   daysColorMap: Map<number, string> = new Map();
-  daysColorJson  = {};
   selectedDay: number = 0;
-  today: Date = new Date(); 
+  today: Date = new Date();
   maxMonth: string;
   selectedMonth: string;
-  daysInMonth: number[] = []; 
-  groupedDays: number[][] = []; 
-  arrayColorRed: string[] = [];
-  lastRedDate: string = '';
-  daysSinceLastRed: number = 0;
-  maxResult: number = 0;
-  calendarEvents: Array<CalendarEvent> = []
+  daysInMonth: number[] = [];
+  groupedDays: number[][] = [];
+  calendarEvents: CalendarEvent[] = [];
+  kpiData: kpi; 
 
-  constructor( private calendarService: CalendarService) {
-    this.selectedMonth  = `${this.today.getFullYear()}-${(this.today.getMonth() + 1).toString().padStart(2, '0')}`; 
-    this.maxMonth = this.datePipe.transform(this.today, 'yyyy-MM')
+  constructor(private calendarService: CalendarService) {
+    this.selectedMonth = `${this.today.getFullYear()}-${(this.today.getMonth() + 1).toString().padStart(2, '0')}`;
+    this.maxMonth = this.datePipe.transform(this.today, 'yyyy-MM');
   }
+
   ngOnInit(): void {
     this.onSelectedMonthChange();
-    if (localStorage.getItem('daysColorJson')) {
-      this.daysColorJson = JSON.parse(localStorage.getItem('daysColorJson'));
-      this.updateDaysColorMap();
-      this.accidentFree(); 
-      this.getMaxPeriodWithoutAccident();
-    }
-    this.getEventsByMonth(this.today.getMonth() + 1 )
+    this.fetchKpi();
+  
+  }
 
-  }
-  onSelectedMonthChange() {
+  onSelectedMonthChange(): void {
     if (this.selectedMonth) {
-      const [year, month] = this.selectedMonth.split('-').map(Number); 
-      const daysCount = new Date(year, month, 0).getDate(); 
-      this.daysInMonth = Array.from({ length: daysCount }, (_, i) => i + 1); 
-      this.groupDays(); 
-      this.updateDaysColorMap(); 
+      const [year, month] = this.selectedMonth.split('-').map(Number);
+      const daysCount = new Date(year, month, 0).getDate();
+      this.daysInMonth = Array.from({ length: daysCount }, (_, i) => i + 1);
+      this.groupDays();
+      this.getEventsByMonth(month);
     }
   }
-  groupDays() {
+  groupDays(): void {
     this.groupedDays = [];
     for (let i = 0; i < this.daysInMonth.length; i += 7) {
-      this.groupedDays.push(this.daysInMonth.slice(i, i + 7)); 
+      this.groupedDays.push(this.daysInMonth.slice(i, i + 7));
     }
   }
-  firePopOver(buttonId: string, selectedDay: number) {
+  firePopOver(buttonId: string, selectedDay: number): void {
     this.selectedDay = selectedDay;
     const button = document.getElementById(buttonId);
     const popOverContent = document.getElementById('popOverContent');
@@ -67,109 +60,102 @@ export class CalendarComponent implements OnInit {
       });
     }
   }
-  updateDayColor(color: string) {
+  updateDayColor(color: string): void {
+    const formattedDate = `${this.selectedMonth}-${this.selectedDay.toString().padStart(2, '0')}`;
+    const existingEvent = this.calendarEvents.find(event =>
+      event.localDate === formattedDate
+    );
+    if (existingEvent) {
+      existingEvent.eventType = color;
+      this.onUpdateEvent(existingEvent);
+    } else {
+      const temporaryId = Math.floor(Math.random() * 1000);
+
+      const newEvent: CalendarEvent = {
+        id: temporaryId,
+        localDate: formattedDate,
+        eventType: color,
+      };
+      this.onSaveEvent(newEvent);
+    }
     this.daysColorMap.set(this.selectedDay, color);
-    this.createJson(this.selectedDay, color);
   }
-  createJson(day: number, color: string) {
-    const [year, month] = this.selectedMonth.split('-');
-    const key = `${day}-${month}-${year}`;
-    this.daysColorJson[key] = color;
-    localStorage.setItem('daysColorJson', JSON.stringify(this.daysColorJson));
-    this.accidentFree(); 
-    this.getMaxPeriodWithoutAccident();
+
+  onUpdateEvent(event: CalendarEvent): void {
+    const eventId = event.id;
+    this.calendarService.updateSecurityEvent(eventId, event).subscribe(
+      response => {
+        console.log('Événement mis à jour avec succès :', response);
+        const index = this.calendarEvents.findIndex(e => e.id === eventId);
+        if (index !== -1) {
+          this.calendarEvents[index] = response; 
+        }
+        this.updateDaysColorMap(); 
+      },
+      error => {
+        console.error('Erreur lors de la mise à jour de l\'événement :', error);
+      }
+    );
   }
-  updateDaysColorMap() {
+  onSaveEvent(event: CalendarEvent): void {
+    this.calendarService.add(event).subscribe(
+      response => {
+        console.log('Événement enregistré avec succès :', response);
+        this.calendarEvents.push(response);
+        this.updateDaysColorMap(); 
+      },
+      error => {
+        console.error('Erreur lors de l\'enregistrement de l\'événement :', error);
+      }
+    );
+  }
+
+  updateDaysColorMap(): void {
     this.daysColorMap.clear();
     const [currentYear, currentMonth] = this.selectedMonth.split('-').map(Number);
-    Object.keys(this.daysColorJson).forEach(key => {
-      const [day, month, year] = key.split('-').map(Number);
-      if (year === currentYear && month === currentMonth) {
-        this.daysColorMap.set(day, this.daysColorJson[key]);
-      }
-    });
-    this.accidentFree(); 
-    this.getMaxPeriodWithoutAccident();
-  }
-  accidentFree(): void {
-    this.arrayColorRed = Object.keys(this.daysColorJson)
-      .filter(key => this.daysColorJson[key] === 'red')
-      .sort((a, b) => {
-        const dateA = new Date(a.split('-').reverse().join('-'));
-        const dateB = new Date(b.split('-').reverse().join('-'));
-        return dateA.getTime() - dateB.getTime();
-      });
-    this.lastRedDate = this.arrayColorRed.length > 0 ? this.arrayColorRed[this.arrayColorRed.length - 1] : '';
-    if (this.lastRedDate) {
-      const lastRedDateObj = new Date(this.lastRedDate.split('-').reverse().join('-'));
-      
-      const differenceInMillis = this.today.getTime() - lastRedDateObj.getTime();
-      this.daysSinceLastRed = Math.floor(differenceInMillis / (1000 * 60 * 60 * 24));
-    } else {
-      this.daysSinceLastRed = 0;
-    }
-    console.log('Dates with red color :', this.arrayColorRed);
-    console.log('Last red date:', this.lastRedDate);
-    console.log('number of days without accident:', this.daysSinceLastRed -1);
-
-  }
-  getMaxPeriodWithoutAccident(): void {
-    this.arrayColorRed.sort((a, b) => {
-      const dateA = new Date(a.split('-').reverse().join('-'));
-      const dateB = new Date(b.split('-').reverse().join('-'));
-      return dateA.getTime() - dateB.getTime();
-    });
   
-    let maxPeriod = 0;
-    let max = 0;
-    let max1=0;
-    // Calcul de la période maximale sans incident
-    const currentYear = this.today.getFullYear();
-    const beginningOfYear = new Date(currentYear, 0, 1);//01 janvier 
-    if (this.arrayColorRed.length > 0) {
-      const firstDate = new Date(this.arrayColorRed[0].split('-').reverse().join('-'));
-      const lastDate = new Date(this.arrayColorRed[this.arrayColorRed.length - 1].split('-').reverse().join('-'));
-      max = Math.floor((firstDate.getTime() - beginningOfYear.getTime()) / (1000 * 60 * 60 * 24));
-      console.log(max);
-      max1=Math.floor((this.today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
-      console.log(max1);
-      
-    for (let i = 0; i < this.arrayColorRed.length - 1; i++) {
-      const dateA = new Date(this.arrayColorRed[i].split('-').reverse().join('-'));
-      const dateB = new Date(this.arrayColorRed[i + 1].split('-').reverse().join('-'));
-      const diffInDays = Math.floor((dateB.getTime() - dateA.getTime()) / (1000 * 60 * 60 * 24));
-      
-      if (diffInDays > maxPeriod) {
-        maxPeriod = diffInDays -1;
+    this.calendarEvents.forEach(event => {
+      const date = new Date(event.localDate);
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+  
+      if (year === currentYear && month === currentMonth) {
+        this.daysColorMap.set(day, event.eventType);
       }
-      
-    }
-    this.maxResult = Math.max(max, max1, maxPeriod);
-    console.log('reccord :', this.maxResult);
-    }
+    });
   }
-
-  getEventsByMonth( month: number) {
+  
+  getEventsByMonth(month: number): void {
     this.calendarService.getSecurityEventsByMonth(month).subscribe({
-      next: (response: Array<CalendarEvent>) => {
+      next: (response: CalendarEvent[]) => {
         console.log(response);
         this.calendarEvents = response;
+        this.updateDaysColorMap(); 
       },
       error: (err) => {
         console.error(err);
-        
-      }
-    });   
-  }
-  updateEvent(eventId: number, updatedEvent: CalendarEvent) {
-    this.calendarService.updateSecurityEvent(eventId, updatedEvent).subscribe({
-      next: (response: CalendarEvent) => {
-        console.log(response);
-      },
-      error: (error) => {
-        console.error('Error updating event', error);
       }
     });
   }
 
+  fetchKpi() {
+    this.calendarService.getKpi()
+      .subscribe(
+        (data) => {
+          this.kpiData = data; 
+          console.log('KPI Data:', this.kpiData);
+        },
+        (error) => {
+          console.error('Error fetching KPI:', error);
+        }
+      );
+  }
+ 
+  isPastDay(day: number): boolean {
+    const selectedDate = new Date(this.selectedMonth);
+    selectedDate.setDate(day);
+    return selectedDate > this.today;
+  }
+  
 }
