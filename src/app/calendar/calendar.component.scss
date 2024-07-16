@@ -26,7 +26,22 @@ li {
         padding: 0;
         font: inherit;
     }
-
+    .custom-button {
+        margin-left: 20px;
+        width: 80px;
+        background-color: #797D7F;
+        color: white;
+        border: none;
+        padding: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+    
+    .custom-button:hover {
+        background-color: #626567;
+    }
 
 
 

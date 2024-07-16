@@ -21,18 +21,17 @@ export class CalendarComponent implements OnInit {
   groupedDays: number[][] = [];
   calendarEvents: CalendarEvent[] = [];
   kpiData: kpi; 
+  isNormalView: boolean = true;
 
   constructor(private calendarService: CalendarService) {
     this.selectedMonth = `${this.today.getFullYear()}-${(this.today.getMonth() + 1).toString().padStart(2, '0')}`;
     this.maxMonth = this.datePipe.transform(this.today, 'yyyy-MM');
   }
-
   ngOnInit(): void {
     this.onSelectedMonthChange();
     this.fetchKpi();
   
   }
-
   onSelectedMonthChange(): void {
     if (this.selectedMonth) {
       const [year, month] = this.selectedMonth.split('-').map(Number);
@@ -70,7 +69,6 @@ export class CalendarComponent implements OnInit {
       this.onUpdateEvent(existingEvent);
     } else {
       const temporaryId = Math.floor(Math.random() * 1000);
-
       const newEvent: CalendarEvent = {
         id: temporaryId,
         localDate: formattedDate,
@@ -80,7 +78,6 @@ export class CalendarComponent implements OnInit {
     }
     this.daysColorMap.set(this.selectedDay, color);
   }
-
   onUpdateEvent(event: CalendarEvent): void {
     const eventId = event.id;
     this.calendarService.updateSecurityEvent(eventId, event).subscribe(
@@ -99,21 +96,19 @@ export class CalendarComponent implements OnInit {
   }
   onSaveEvent(event: CalendarEvent): void {
     this.calendarService.add(event).subscribe(
-      response => {
+      (response )=> {
         console.log('Événement enregistré avec succès :', response);
         this.calendarEvents.push(response);
         this.updateDaysColorMap(); 
       },
-      error => {
+      (error) => {
         console.error('Erreur lors de l\'enregistrement de l\'événement :', error);
       }
     );
   }
-
   updateDaysColorMap(): void {
     this.daysColorMap.clear();
     const [currentYear, currentMonth] = this.selectedMonth.split('-').map(Number);
-  
     this.calendarEvents.forEach(event => {
       const date = new Date(event.localDate);
       const day = date.getDate();
@@ -125,7 +120,6 @@ export class CalendarComponent implements OnInit {
       }
     });
   }
-  
   getEventsByMonth(month: number): void {
     this.calendarService.getSecurityEventsByMonth(month).subscribe({
       next: (response: CalendarEvent[]) => {
@@ -138,10 +132,8 @@ export class CalendarComponent implements OnInit {
       }
     });
   }
-
   fetchKpi() {
-    this.calendarService.getKpi()
-      .subscribe(
+    this.calendarService.getKpi().subscribe(
         (data) => {
           this.kpiData = data; 
           console.log('KPI Data:', this.kpiData);
@@ -151,11 +143,12 @@ export class CalendarComponent implements OnInit {
         }
       );
   }
- 
   isPastDay(day: number): boolean {
     const selectedDate = new Date(this.selectedMonth);
     selectedDate.setDate(day);
     return selectedDate > this.today;
   }
-  
+  toggleCalendarView() {
+    this.isNormalView = !this.isNormalView;
+  }
 }

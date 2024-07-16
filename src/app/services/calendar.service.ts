@@ -24,3 +24,4 @@ export class CalendarService {
     return this.http.get<kpi>(`${this.baseUrl}/kpi`);
 }
 }
+

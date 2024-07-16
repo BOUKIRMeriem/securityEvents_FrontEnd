@@ -8,7 +8,8 @@
                         <input type="month" id="calendar-input" class="calendar-input" [max]="maxMonth"
                             [(ngModel)]="selectedMonth" (change)="onSelectedMonthChange()"
                             style="width: 170px; border-radius: 10px 10px 10px 10px; border: 1px solid #BDC3C7  ; padding: 4px 10px 4px 10px;">
-                        <div style="margin-top: 20px; margin-left: 50px;">
+                        <button (click)="toggleCalendarView()"  class="custom-button">Change</button>
+                        <div *ngIf="isNormalView" style="margin-top: 20px; margin-left: 120px;">
                             <div *ngFor="let week of groupedDays">
                                 <ul class="list-unstyled">
                                     <li *ngFor="let day of week"
@@ -17,10 +18,137 @@
                                             [ngbPopover]="popOverContent"
                                             [popoverTitle]="'Déclaration accident/risque Jour-' + day"
                                             [autoClose]="true"
-                                             [disabled]="isPastDay(day)"
-                                             placement="bottom" class="popover-button">
+                                            [disabled]="isPastDay(day)"
+                                            placement="bottom" class="popover-button">
                                             {{ day }}
                                         </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div *ngIf="!isNormalView" style="margin-top: 20px; margin-left: 120px;">
+                            <div style=" margin-left: 60px; ">
+                                <ul class="list-unstyled">
+                                    <li style="border-top-left-radius: 10px;"></li>
+                                    <ng-container *ngFor="let day of daysInMonth">
+                                        <li *ngIf="day >= 1 && day <= 2"
+                                            [ngStyle]="{'background-color': this.daysColorMap.get(day) , 'border-top-right-radius': day === 2 ? '10px' : '0'}">
+                                            <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
+                                                [ngbPopover]="popOverContent"
+                                                [popoverTitle]="'Declaration accident/risque Jour-' + day"
+                                                [autoClose]="true"
+                                                [disabled]="isPastDay(day)"
+                                                placement="bottom" class="popover-button">
+                                                {{ day }}
+                                            </button>
+                                        </li>
+                                    </ng-container>
+                                </ul>
+                                <ul class="list-unstyled">
+                                    <ng-container *ngFor="let day of daysInMonth">
+                                        <li *ngIf="day >= 3 && day <= 5"
+                                            [ngStyle]="{'background-color': daysColorMap.get(day) }">
+                                            <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
+                                                [ngbPopover]="popOverContent"
+                                                [popoverTitle]="'Declaration accident/risque Jour-' + day"
+                                                [autoClose]="true"
+                                                [disabled]="isPastDay(day)"
+                                                placement="bottom" class="popover-button">
+                                                {{ day }}
+                                            </button>
+                                        </li>
+                                    </ng-container>
+                                </ul>
+                            </div>
+                            <ul class="list-unstyled">
+                                <ng-container *ngFor="let day of daysInMonth">
+                                    <li *ngIf="day >= 6 && day <= 12" [ngStyle]="{'background-color': daysColorMap.get(day),   'border-top-right-radius': day === 12 ? '10px' : '0',
+                        'border-top-left-radius': day === 6 ? '10px' : '0'}">
+                                        <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
+                                            [ngbPopover]="popOverContent"
+                                            [popoverTitle]="'Declaration accident/risque Jour-' + day"
+                                            [autoClose]="true" placement="bottom" class="popover-button">
+                                            {{ day }}
+                                        </button>
+                                    </li>
+                                </ng-container>
+                            </ul>
+                            <ul class="list-unstyled">
+                                <ng-container *ngFor="let day of daysInMonth">
+                                    <li *ngIf="day >= 13 && day <= 19"
+                                        [ngStyle]="{'background-color': daysColorMap.get(day) }">
+                                        <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
+                                            [ngbPopover]="popOverContent"
+                                            [popoverTitle]="'Declaration accident/risque Jour-' + day"
+                                            [autoClose]="true" 
+                                            [disabled]="isPastDay(day)"
+                                            placement="bottom" class="popover-button">
+                                            {{ day }}
+                                        </button>
+                                    </li>
+                                </ng-container>
+                            </ul>
+                            <ul class="list-unstyled">
+                                <ng-container *ngFor="let day of daysInMonth">
+                                    <li *ngIf="day >= 20 && day <= 26" [ngStyle]="{'background-color': daysColorMap.get(day),   'border-bottom-left-radius': day === 20 ? '10px' : '0',
+                        'border-bottom-right-radius': day === 26 ? '10px' : '0'}">
+                                        <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
+                                            [ngbPopover]="popOverContent"
+                                            [popoverTitle]="'Declaration accident/risque Jour-' + day"
+                                            [autoClose]="true"
+                                            [disabled]="isPastDay(day)"
+                                            placement="bottom" class="popover-button">
+                                            {{ day }}
+                                        </button>
+                                    </li>
+                                </ng-container>
+                            </ul>
+                            <div style=" margin-left: 60px;">
+                                <ul class="list-unstyled">
+                                    <ng-container *ngFor="let day of daysInMonth">
+                                        <li *ngIf="day >= 27 && day <= 29" [ngStyle]="{
+                            'background-color': daysColorMap.get(day)
+                        }">
+                                            <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
+                                                [ngbPopover]="popOverContent"
+                                                [popoverTitle]="'Declaration accident/risque Jour-' + day"
+                                                [autoClose]="true"
+                                                [disabled]="isPastDay(day)"
+                                                placement="bottom" class="popover-button">
+                                                {{ day }}
+                                            </button>
+                                        </li>
+                                    </ng-container>
+                                    <li *ngIf="daysInMonth.length <= 28"></li>
+                                </ul>
+                                <ul class="list-unstyled">
+                                    <ng-container *ngFor="let day of daysInMonth">
+                                        <li *ngIf="day >= 30 && day <= 31"
+                                            [ngStyle]="{'background-color': daysColorMap.get(day) , 'border-bottom-left-radius': day === 30 ? '10px' : '0'}">
+                                            <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
+                                                [ngbPopover]="popOverContent"
+                                                [popoverTitle]="'Declaration accident/risque Jour-' + day"
+                                                [autoClose]="true" 
+                                                [disabled]="isPastDay(day)"
+                                                placement="bottom" class="popover-button">
+                                                {{ day }}
+                                            </button>
+                                        </li>
+                                    </ng-container>
+                                    <li *ngIf="daysInMonth.length > 29"
+                                        [ngStyle]="{'border-bottom-right-radius': daysInMonth.length >= 31 ? '10px' : '0'}">
+                                    </li>
+                                    <li style="border-bottom-right-radius: 10px;" *ngIf="daysInMonth.length ===30 ">
+                                    </li>
+                                    <li *ngIf="daysInMonth.length === 28 || daysInMonth.length === 29" [ngStyle]="{
+        'border-bottom-left-radius': daysInMonth.length === 28 ? '10px' : (daysInMonth.length === 29 ? '10px' : '0')
+    }">
+                                    </li>
+                                    <li *ngIf="daysInMonth.length === 28 || daysInMonth.length === 29"></li>
+
+                                    <li *ngIf="daysInMonth.length === 28 || daysInMonth.length === 29" [ngStyle]="{
+                                        'border-bottom-right-radius': daysInMonth.length === 28 ? '10px' : (daysInMonth.length === 29 ? '10px' : '0')
+                                    }">
                                     </li>
                                 </ul>
                             </div>
@@ -85,7 +213,7 @@
                                 <span class="h3 mb-0" style="color: #909497 ; font-size: 20px;">{{kpiData.lastAccident ? kpiData.lastAccident : '--'}}</span>
                             </div>
                             <div class="col-auto">
-                                <img src="assets/accident.png" alt="Icone de calendrier " style="width: 60px;">
+                                <img src="assets/accident.png" alt="Icone de calendrier " style="width: 60px;" >
                             </div>
                         </div>
                     </div>
