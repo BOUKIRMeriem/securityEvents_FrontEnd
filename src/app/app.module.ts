@@ -9,13 +9,17 @@ import { NgbModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { CroixSecuriteComponent } from './croix-securite/croix-securite.component';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { TestComponent } from './test/test.component';
+import { HomeComponent } from './home/home.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     CalendarComponent,
-    CroixSecuriteComponent
+    CroixSecuriteComponent,
+    TestComponent,
+    HomeComponent
   ],
   imports: [
     CommonModule,

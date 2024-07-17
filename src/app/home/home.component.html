@@ -1,0 +1,103 @@
+<div style="background-color: #F8F9F9; height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+        <div class="col-xl-5 col-lg-6 mb-4">
+            <div class="card card-stats mb-4 mb-xl-0"
+                style="margin-right: 50px;border-radius: 15px 15px 15px 15px;border-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <div class="card-body">
+                    <div class="row" style=" display: flex; justify-content: center; align-items: center;">
+                        <input type="month" id="calendar-input" class="calendar-input" [(ngModel)]="selectedMonth"
+                            (change)="onSelectedMonthChange()" [max]="maxMonth"
+                            style="border-radius: 10px 10px 10px 10px; border: 1px solid #BDC3C7 ;padding: 4px 10px 4px 10px;width: 170px;">
+                        <div style="margin-top: 20px; margin-left: 5px;">
+                            <div class="circle">
+                                <div class="inner-circle">
+                                    <div class="center">S</div>
+                                </div>
+                                <ul>
+                                    <li *ngFor="let day of daysInMonth; let i = index" [ngStyle]="{
+                                          'transform': 'rotate(' + (i * (360 / daysInMonth.length)) + 'deg)'
+                                           }" [class]="'day_' + day">
+                                        <div class="line"></div>
+                                        <div class="day"
+                                            [ngStyle]="{'transform': 'rotate(' + (-i * (360 / daysInMonth.length)) + 'deg)','background-color': daysColorMap.get(day)}">
+                                            <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
+                                                [ngbPopover]="popOverContent"
+                                                [popoverTitle]="'Déclaration accident/risque Jour-' + day"
+                                                [autoClose]="true" placement="top" class="popover-button">
+                                                {{ day }}
+                                            </button>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ng-template #popOverContent class="popover">
+            <div style="display: flex; align-items: center; justify-content:  space-evenly;">
+                <button (click)="updateDayColor('green')"
+                    style="border: 1px solid green; background-color:green ; height: 35px; width:35px;"></button>
+                <button (click)="updateDayColor('red')"
+                    style="border: 1px solid red; background-color:red ;  height: 35px; width:35px;"></button>
+                <button (click)="updateDayColor('orange')"
+                    style="border: 1px solid orange; background-color:orange;  height: 35px; width:35px;"></button>
+            </div>
+        </ng-template>
+        <div style="display: flex; flex-direction: column;">
+            <div class="col-xl-3 col-lg-6 mb-4" style="width: 350px;">
+                <div class="card card-stats mb-4 mb-xl-0"
+                    style="border-radius: 10px 10px 10px 10px; border-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="card-title mb-0" style="color: #909497;">Nombre de jour(s) sans accident(s)
+                                </h6>
+                                <span class="h3 mb-0" style="color: #909497;">{{kpiData.daysBetween}}</span>
+                            </div>
+                            <div class="col-auto">
+                                <img src="assets/calendrier.png" alt="Icone de calendrier" style="width: 60px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 mb-4" style="width: 350px;">
+                <div class="card card-stats mb-4 mb-xl-0"
+                    style="border-radius: 10px 10px 10px 10px;border-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="card-title mb-0" style="color: #909497  ;">Record de jour(s) sans accident(s)
+                                </h6>
+                                <span class="h3 mb-0" style="color: #909497 ;">{{kpiData.record}}</span>
+                            </div>
+                            <div class="col-auto">
+                                <img src="assets/record-de-temps.png" alt="Icone de calendrier " style="width: 60px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 mb-4" style="width: 350px;">
+                <div class="card card-stats mb-4 mb-xl-0"
+                    style="border-radius: 10px 10px 10px 10px;border-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="card-title mb-0" style="color: #909497  ;">Dernière accident(s)
+                                </h6>
+                                <span class="h3 mb-0" style="color: #909497 ; font-size: 20px;">{{kpiData.lastAccident ?
+                                    kpiData.lastAccident : '--'}}</span>
+                            </div>
+                            <div class="col-auto">
+                                <img src="assets/accident.png" alt="Icone de calendrier " style="width: 60px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
