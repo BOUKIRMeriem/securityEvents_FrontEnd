@@ -1,34 +1,39 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import * as bootstrap from "bootstrap";
 import { kpi } from '../models/kpi.model';
 import { CalendarService } from '../services/calendar.service';
 import { CalendarEvent } from '../models/events.model';
+import { ModeService } from '../services/mode.service';
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  selector: 'app-cercle',
+  templateUrl: './cercle.component.html',
+  styleUrls: ['./cercle.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class CercleComponent implements OnInit {
   datePipe: DatePipe = new DatePipe('en-us');
   maxMonth: string;
   selectedMonth: string;
   today: Date = new Date();
   daysInMonth: number[] = [];
   selectedDay: number = 0;
-  kpiData: kpi; 
+  kpiData: kpi;
   calendarEvents: CalendarEvent[] = [];
   daysColorMap: Map<number, string> = new Map();
-
-  constructor(private calendarService: CalendarService) {
+  currentMode: string;
+  constructor(private calendarService: CalendarService, private modeService: ModeService) {
     this.selectedMonth = `${this.today.getFullYear()}-${(this.today.getMonth() + 1).toString().padStart(2, '0')}`;
     this.maxMonth = this.datePipe.transform(this.today, 'yyyy-MM');
 
   }
-
   ngOnInit(): void {
+    console.log(this.kpiData);
+    this.kpiData = new kpi();
     this.onSelectedMonthChange();
     this.fetchKpi();
+    this.modeService.mode$.subscribe(mode => {
+      this.currentMode = mode;
+    });
   }
 
   onSelectedMonthChange(): void {
@@ -80,9 +85,9 @@ export class HomeComponent implements OnInit {
         console.log('Événement mis à jour avec succès :', response);
         const index = this.calendarEvents.findIndex(e => e.id === eventId);
         if (index !== -1) {
-          this.calendarEvents[index] = response; 
+          this.calendarEvents[index] = response;
         }
-        this.updateDaysColorMap(); 
+        this.updateDaysColorMap();
       },
       error => {
         console.error('Erreur lors de la mise à jour de l\'événement :', error);
@@ -91,10 +96,10 @@ export class HomeComponent implements OnInit {
   }
   onSaveEvent(event: CalendarEvent): void {
     this.calendarService.add(event).subscribe(
-      (response )=> {
+      (response) => {
         console.log('Événement enregistré avec succès :', response);
         this.calendarEvents.push(response);
-        this.updateDaysColorMap(); 
+        this.updateDaysColorMap();
       },
       (error) => {
         console.error('Erreur lors de l\'enregistrement de l\'événement :', error);
@@ -109,7 +114,7 @@ export class HomeComponent implements OnInit {
       const day = date.getDate();
       const month = date.getMonth() + 1;
       const year = date.getFullYear();
-  
+
       if (year === currentYear && month === currentMonth) {
         this.daysColorMap.set(day, event.eventType);
       }
@@ -120,7 +125,7 @@ export class HomeComponent implements OnInit {
       next: (response: CalendarEvent[]) => {
         console.log(response);
         this.calendarEvents = response;
-        this.updateDaysColorMap(); 
+        this.updateDaysColorMap();
       },
       error: (err) => {
         console.error(err);
@@ -129,13 +134,22 @@ export class HomeComponent implements OnInit {
   }
   fetchKpi() {
     this.calendarService.getKpi().subscribe(
-        (data) => {
-          this.kpiData = data; 
-          console.log('KPI Data:', this.kpiData);
-        },
-        (error) => {
-          console.error('Error fetching KPI:', error);
-        }
-      );
+      (data) => {
+        this.kpiData = data;
+        console.log('KPI Data:', this.kpiData);
+      },
+      (error) => {
+        console.error('Error fetching KPI:', error);
+      }
+    );
+  }
+  isPastDay(day: number): boolean {
+    const selectedDate = new Date(this.selectedMonth);
+    selectedDate.setDate(day);
+    return selectedDate > this.today;
+  }
+  onModeChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    this.modeService.setMode(target.value);
   }
 }

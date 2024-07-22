@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import * as bootstrap from "bootstrap";
 import { DatePipe } from '@angular/common';
 import { CalendarEvent } from '../models/events.model';
 import { kpi } from '../models/kpi.model';
 import { CalendarService } from '../services/calendar.service';
+import { ModeService } from '../services/mode.service';
 @Component({
   selector: 'app-croix-securite',
   templateUrl: './croix-securite.component.html',
@@ -24,18 +25,21 @@ export class CroixSecuriteComponent implements OnInit {
   maxResult: number = 0;
   calendarEvents: CalendarEvent[] = [];
   kpiData: kpi;
+  currentMode: string;
 
-  constructor(private calendarService: CalendarService) {
+  constructor(private calendarService: CalendarService, private modeService: ModeService) {
     this.selectedMonth = `${this.today.getFullYear()}-${(this.today.getMonth() + 1).toString().padStart(2, '0')}`;
     this.maxMonth = this.datePipe.transform(this.today, 'yyyy-MM');
   }
-
   ngOnInit(): void {
+    this.kpiData = new kpi();
     this.onSelectedMonthChange();
     this.fetchKpi();
-  
-  }
+    this.modeService.mode$.subscribe(mode => {
+      this.currentMode = mode;
+    });
 
+  }
   onSelectedMonthChange(): void {
     this.daysInMonth = [];
     if (this.selectedMonth) {
@@ -93,9 +97,9 @@ export class CroixSecuriteComponent implements OnInit {
         console.log('Événement mis à jour avec succès :', response);
         const index = this.calendarEvents.findIndex(e => e.id === eventId);
         if (index !== -1) {
-          this.calendarEvents[index] = response; 
+          this.calendarEvents[index] = response;
         }
-        this.updateDaysColorMap(); 
+        this.updateDaysColorMap();
       },
       error => {
         console.error('Erreur lors de la mise à jour de l\'événement :', error);
@@ -107,7 +111,7 @@ export class CroixSecuriteComponent implements OnInit {
       response => {
         console.log('Événement enregistré avec succès :', response);
         this.calendarEvents.push(response);
-        this.updateDaysColorMap(); 
+        this.updateDaysColorMap();
       },
       error => {
         console.error('Erreur lors de l\'enregistrement de l\'événement :', error);
@@ -118,25 +122,25 @@ export class CroixSecuriteComponent implements OnInit {
   updateDaysColorMap(): void {
     this.daysColorMap.clear();
     const [currentYear, currentMonth] = this.selectedMonth.split('-').map(Number);
-  
+
     this.calendarEvents.forEach(event => {
       const date = new Date(event.localDate);
       const day = date.getDate();
       const month = date.getMonth() + 1;
       const year = date.getFullYear();
-  
+
       if (year === currentYear && month === currentMonth) {
         this.daysColorMap.set(day, event.eventType);
       }
     });
   }
-  
+
   getEventsByMonth(month: number): void {
     this.calendarService.getSecurityEventsByMonth(month).subscribe({
       next: (response: CalendarEvent[]) => {
         console.log(response);
         this.calendarEvents = response;
-        this.updateDaysColorMap(); 
+        this.updateDaysColorMap();
       },
       error: (err) => {
         console.error(err);
@@ -147,7 +151,7 @@ export class CroixSecuriteComponent implements OnInit {
     this.calendarService.getKpi()
       .subscribe(
         (data) => {
-          this.kpiData = data; 
+          this.kpiData = data;
           console.log('KPI Data:', this.kpiData);
         },
         (error) => {
@@ -155,12 +159,15 @@ export class CroixSecuriteComponent implements OnInit {
         }
       );
   }
- 
+
   isPastDay(day: number): boolean {
     const selectedDate = new Date(this.selectedMonth);
     selectedDate.setDate(day);
     return selectedDate > this.today;
   }
-  
+  onModeChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    this.modeService.setMode(target.value);
+  }
 
 }

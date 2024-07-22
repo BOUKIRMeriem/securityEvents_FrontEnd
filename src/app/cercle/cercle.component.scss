@@ -1,0 +1,86 @@
+$circle-diameter: 250px;
+$inner-circle-diameter: 130px;
+$button-size: 20px; 
+$outer_radius: $circle-diameter / 2;
+$inner_radius: $inner-circle-diameter / 2;
+$segment_height: $outer_radius - $inner_radius;
+.circle {
+  position: relative;
+  width: $circle-diameter;
+  height: $circle-diameter;
+  border-radius: 50%;
+  background: white;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #EAEDED;
+  .inner-circle {
+    position: absolute;
+    width: $inner-circle-diameter;
+    height: $inner-circle-diameter;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    .center {
+      font-size: 4rem;
+      font-weight: bold;
+      color: #909497;
+    }
+  }
+  ul {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  li {
+    position: absolute;
+    width: $button-size;
+    height: $outer_radius; // Use the outer radius for height
+    display: flex;
+    align-items: flex-start; // Align items to the start
+    justify-content: center;
+    transform-origin: center;
+    transform: rotate(calc(360deg / var(--days-count) * var(--i))) translateY(-$outer_radius + $button-size / 2);
+    .segment {
+      position: absolute;
+      height: ($segment_height + $inner_radius); 
+      top: $inner_radius - 12px;
+      left: 50%;
+      transform-origin: left center;
+      z-index: 1;
+      border: 1.5px solid #000;
+      -webkit-transform: skewX(11deg);
+      transform: skewX(11deg);
+      clip-path: polygon(100% 0%, 0% 100%, 0% 0%, 0% 0%);
+      background-color: #EAEDED;
+    }
+    .popover-button {
+      background: none;
+      border: none;
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+      padding: 0;
+      font: inherit; 
+      position: absolute;
+      top: calc($inner_radius - $button-size / 0.35); 
+      transform: translateX(-6%) rotate(calc(-360deg / var(--days-count) * var(--i))); 
+      font-size: 0.8rem; 
+      text-align: center;
+      width: $button-size;
+      transform-origin: center center;
+  }
+  }
+}
+

@@ -1,6 +1,6 @@
-export interface kpi{
-    record :number;
-    daysBetween: number;
-    lastAccident:Date;
+export class kpi{
+    record! :number;
+    daysBetween!: number;
+    lastAccident!:Date;
 
 }

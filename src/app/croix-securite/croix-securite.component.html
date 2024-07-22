@@ -1,13 +1,21 @@
 <div style="background-color: #F8F9F9; height: 100vh; display: flex; justify-content: center; align-items: center;">
     <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
         <div class="col-xl-5 col-lg-6 mb-4">
-            <div class="card card-stats mb-4 mb-xl-0" style="margin-right: 50px;border-radius: 15px 15px 15px 15px;border-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <div class="card card-stats mb-4 mb-xl-0"
+                style="margin-right: 50px;border-radius: 15px 15px 15px 15px;border-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                 <div class="card-body">
                     <div class="row" style=" display: flex; justify-content: center; align-items: center;">
-                        <input type="month" id="calendar-input" class="calendar-input" [max]="maxMonth" [(ngModel)]="selectedMonth"
-                            (change)="onSelectedMonthChange()"
+                        <input type="month" id="calendar-input" class="calendar-input" [max]="maxMonth"
+                            [(ngModel)]="selectedMonth" (change)="onSelectedMonthChange()"
                             style="width: 170px; border-radius: 10px 10px 10px 10px; border: 1px solid #BDC3C7  ; padding: 4px 10px 4px 10px;">
-                        <div style="margin-top: 20px; margin-left: 50px;">
+                        <select [value]="currentMode" (change)="onModeChange($event)"
+                            style="width: 110px;margin-left: 20px;">
+
+                            <option value="calender">Calender</option>
+                            <option value="croix">Croix</option>
+                            <option value="cercle">Cercle</option>
+                        </select>
+                        <div style="margin-top: 20px; margin-left: 140px;">
                             <div style=" margin-left: 60px; ">
                                 <ul class="list-unstyled">
                                     <li style="border-top-left-radius: 10px;"></li>
@@ -17,9 +25,8 @@
                                             <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
                                                 [ngbPopover]="popOverContent"
                                                 [popoverTitle]="'Declaration accident/risque Jour-' + day"
-                                                [autoClose]="true"
-                                                [disabled]="isPastDay(day)"
-                                                placement="bottom" class="popover-button">
+                                                [autoClose]="true" [disabled]="isPastDay(day)" placement="bottom"
+                                                class="popover-button">
                                                 {{ day }}
                                             </button>
                                         </li>
@@ -32,9 +39,8 @@
                                             <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
                                                 [ngbPopover]="popOverContent"
                                                 [popoverTitle]="'Declaration accident/risque Jour-' + day"
-                                                [autoClose]="true"
-                                                [disabled]="isPastDay(day)"
-                                                placement="bottom" class="popover-button">
+                                                [autoClose]="true" [disabled]="isPastDay(day)" placement="bottom"
+                                                class="popover-button">
                                                 {{ day }}
                                             </button>
                                         </li>
@@ -61,9 +67,8 @@
                                         <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
                                             [ngbPopover]="popOverContent"
                                             [popoverTitle]="'Declaration accident/risque Jour-' + day"
-                                            [autoClose]="true" 
-                                            [disabled]="isPastDay(day)"
-                                            placement="bottom" class="popover-button">
+                                            [autoClose]="true" [disabled]="isPastDay(day)" placement="bottom"
+                                            class="popover-button">
                                             {{ day }}
                                         </button>
                                     </li>
@@ -76,9 +81,8 @@
                                         <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
                                             [ngbPopover]="popOverContent"
                                             [popoverTitle]="'Declaration accident/risque Jour-' + day"
-                                            [autoClose]="true"
-                                            [disabled]="isPastDay(day)"
-                                            placement="bottom" class="popover-button">
+                                            [autoClose]="true" [disabled]="isPastDay(day)" placement="bottom"
+                                            class="popover-button">
                                             {{ day }}
                                         </button>
                                     </li>
@@ -93,9 +97,8 @@
                                             <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
                                                 [ngbPopover]="popOverContent"
                                                 [popoverTitle]="'Declaration accident/risque Jour-' + day"
-                                                [autoClose]="true"
-                                                [disabled]="isPastDay(day)"
-                                                placement="bottom" class="popover-button">
+                                                [autoClose]="true" [disabled]="isPastDay(day)" placement="bottom"
+                                                class="popover-button">
                                                 {{ day }}
                                             </button>
                                         </li>
@@ -109,9 +112,8 @@
                                             <button [id]="'popover_' + day" (click)="firePopOver('popover_' + day, day)"
                                                 [ngbPopover]="popOverContent"
                                                 [popoverTitle]="'Declaration accident/risque Jour-' + day"
-                                                [autoClose]="true" 
-                                                [disabled]="isPastDay(day)"
-                                                placement="bottom" class="popover-button">
+                                                [autoClose]="true" [disabled]="isPastDay(day)" placement="bottom"
+                                                class="popover-button">
                                                 {{ day }}
                                             </button>
                                         </li>
@@ -150,9 +152,10 @@
         </div>
         <div style="display: flex; flex-direction: column;">
             <div class="col-xl-3 col-lg-6 mb-4" style="width: 350px;">
-                <div class="card card-stats mb-4 mb-xl-0" style="border-radius: 10px 10px 10px 10px; border-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <div class="card card-stats mb-4 mb-xl-0"
+                    style="border-radius: 10px 10px 10px 10px; border-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                     <div class="card-body">
-                        <div class="row" >
+                        <div class="row">
                             <div class="col">
                                 <h6 class="card-title mb-0" style="color: #909497;">Nombre de jour(s) sans accident(s)
                                 </h6>
@@ -166,7 +169,8 @@
                 </div>
             </div>
             <div class="col-xl-3 col-lg-6 mb-4" style="width: 350px;">
-                <div class="card card-stats mb-4 mb-xl-0" style="border-radius: 10px 10px 10px 10px;border-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <div class="card card-stats mb-4 mb-xl-0"
+                    style="border-radius: 10px 10px 10px 10px;border-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
@@ -189,7 +193,8 @@
                             <div class="col">
                                 <h6 class="card-title mb-0" style="color: #909497  ;">Dernière accident(s)
                                 </h6>
-                                <span class="h3 mb-0" style="color: #909497 ; font-size: 20px;">{{kpiData.lastAccident ? kpiData.lastAccident : '--'}}</span>
+                                <span class="h3 mb-0" style="color: #909497 ; font-size: 20px;">{{kpiData.lastAccident ?
+                                    kpiData.lastAccident : '--'}}</span>
                             </div>
                             <div class="col-auto">
                                 <img src="assets/accident.png" alt="Icone de calendrier " style="width: 60px;">
@@ -198,7 +203,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </div>
 </div>

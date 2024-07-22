@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http'
 import { CalendarEvent } from '../models/events.model';
 import { Observable } from 'rxjs';
 import { kpi } from '../models/kpi.model';
+import { ModeService } from './mode.service';
 @Injectable({
   providedIn: 'root'
 })
 export class CalendarService {
   private baseUrl = 'http://localhost:8080/events';
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient ) { }
   getSecurityEventsByMonth(month: number) {
     return this.http.get<Array<CalendarEvent>>(`${this.baseUrl}/month/${month}`)
   }
@@ -23,5 +24,6 @@ export class CalendarService {
   getKpi(): Observable<kpi> {
     return this.http.get<kpi>(`${this.baseUrl}/kpi`);
 }
+
 }
 
