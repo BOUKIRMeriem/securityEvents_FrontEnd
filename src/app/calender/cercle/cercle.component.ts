@@ -1,55 +1,50 @@
-import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import * as bootstrap from 'bootstrap';
-import { CalendarService } from '../services/calendar.service';
-import { CalendarEvent } from '../models/events.model';
-import { kpi } from '../models/kpi.model';
-import { ModeService } from '../services/mode.service';
-
+import { DatePipe } from '@angular/common';
+import * as bootstrap from "bootstrap";
+import { kpi } from '../../models/kpi.model';
+import { CalendarService } from '../../services/calender/calendar.service';
+import { CalendarEvent } from '../../models/events.model';
+import { ModeService } from '../../services/mode.service';
 @Component({
-  selector: 'app-calendar',
-  templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.scss']
+  selector: 'app-cercle',
+  templateUrl: './cercle.component.html',
+  styleUrls: ['./cercle.component.scss']
 })
-export class CalendarComponent implements OnInit {
+export class CercleComponent implements OnInit {
   datePipe: DatePipe = new DatePipe('en-us');
-  daysColorMap: Map<number, string> = new Map();
-  selectedDay: number = 0;
-  today: Date = new Date();
   maxMonth: string;
   selectedMonth: string;
+  today: Date = new Date();
   daysInMonth: number[] = [];
-  groupedDays: number[][] = [];
-  calendarEvents: CalendarEvent[] = [];
+  selectedDay: number = 0;
   kpiData: kpi;
+  calendarEvents: CalendarEvent[] = [];
+  daysColorMap: Map<number, string> = new Map();
   currentMode: string;
-
   constructor(private calendarService: CalendarService, private modeService: ModeService) {
     this.selectedMonth = `${this.today.getFullYear()}-${(this.today.getMonth() + 1).toString().padStart(2, '0')}`;
     this.maxMonth = this.datePipe.transform(this.today, 'yyyy-MM');
+
   }
   ngOnInit(): void {
+    console.log(this.kpiData);
     this.kpiData = new kpi();
     this.onSelectedMonthChange();
     this.fetchKpi();
     this.modeService.mode$.subscribe(mode => {
       this.currentMode = mode;
     });
-
   }
+
   onSelectedMonthChange(): void {
+    this.daysInMonth = [];
     if (this.selectedMonth) {
       const [year, month] = this.selectedMonth.split('-').map(Number);
       const daysCount = new Date(year, month, 0).getDate();
-      this.daysInMonth = Array.from({ length: daysCount }, (_, i) => i + 1);
-      this.groupDays();
+      for (let i = 1; i <= daysCount; i++) {
+        this.daysInMonth.push(i);
+      }
       this.getEventsByMonth(month);
-    }
-  }
-  groupDays(): void {
-    this.groupedDays = [];
-    for (let i = 0; i < this.daysInMonth.length; i += 7) {
-      this.groupedDays.push(this.daysInMonth.slice(i, i + 7));
     }
   }
   firePopOver(buttonId: string, selectedDay: number): void {
@@ -153,11 +148,8 @@ export class CalendarComponent implements OnInit {
     selectedDate.setDate(day);
     return selectedDate > this.today;
   }
-
   onModeChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
+    const target = event.target as HTMLSelectElement;// select
     this.modeService.setMode(target.value);
-  
   }
-
 }

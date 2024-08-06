@@ -1,9 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CalendarComponent } from './calendar/calendar.component';
-import { CroixSecuriteComponent } from './croix-securite/croix-securite.component';
-import { CercleComponent } from './cercle/cercle.component';
-import { ParentComponent } from './parent/parent.component';
+import { CalendarComponent } from './calender/calendar/calendar.component';
+import { CroixSecuriteComponent } from './calender/croix-securite/croix-securite.component';
+import { CercleComponent } from './calender/cercle/cercle.component';
+import { ParentComponent } from './calender/parent/parent.component';
+import { Parent1Component } from './dashboard/parent1/parent1.component';
+import { MachineAComponent } from './dashboard/machine-a/machine-a.component';
+import { MachineQComponent } from './dashboard/machine-q/machine-q.component';
+import { DashboardGlobalComponent } from './dashboard/dashboard-global/dashboard-global.component';
+import { DashbordAvailabilityComponent } from './dashboard/dashbord-availability/dashbord-availability.component';
+import { DashbordQualityComponent } from './dashboard/dashbord-quality/dashbord-quality.component';
+
 
 
 
@@ -13,6 +20,12 @@ const routes: Routes = [
   { path:'croix',  component: CroixSecuriteComponent},
   {path:'cercle' , component:CercleComponent},
   {path:'' , component:ParentComponent},
+  {path:'dashboard', component:Parent1Component},
+  {path:'machineA' , component:MachineAComponent},
+  {path:'machineQ' , component:MachineQComponent},
+  {path:'global' , component:DashboardGlobalComponent},
+  {path:'availability' , component:DashbordAvailabilityComponent},
+  {path:'quality' , component:DashbordQualityComponent},
 ];
 
 @NgModule({

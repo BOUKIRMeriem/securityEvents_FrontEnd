@@ -1,0 +1,65 @@
+.card-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    position: relative;
+    padding: 0;
+    margin: 0;
+}
+
+p {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    color: white;
+    font-size: 15px;
+    margin: 0;
+}
+
+.date-slider-container {
+    width: 80%;
+    padding: 10px;
+    background-color: #424949;
+    color: #fff;
+    margin: 10px auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+select {
+    padding: 5px;
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    display: block;
+    position: absolute;
+    right: 5px;
+    top: 0px;
+}
+
+.months {
+    display: flex;
+    justify-content: center;
+    margin-top: 0px;
+}
+
+.month {
+    width: 60px;
+    text-align: center;
+    padding: 2px;
+    background-color: #626567;
+    box-sizing: border-box;
+    margin: 2px;
+}
+
+.month.selected {
+    background-color: #000;
+    font-weight: bold;
+}
+
+select option {
+    background-color: #626567;
+}

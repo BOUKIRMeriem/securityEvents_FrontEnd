@@ -1,0 +1,85 @@
+.card-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  position: relative;
+  padding: 0;
+  margin: 0;
+}
+
+.apx-chart {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+}
+
+::ng-deep .apexcharts-legend-text {
+  font-size: 8px !important;
+}
+
+h6 {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  color: white;
+  font-size: 25px;
+  margin: 0;
+}
+
+p {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  color: white;
+  font-size: 15px;
+  margin: 0;
+}
+
+.date-slider-container {
+  width: 80%;
+  padding: 7px;
+  background-color: #f7f9f9;
+  color: #fff;
+  margin: 10px auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.months {
+  display: flex;
+  justify-content: center;
+  margin-top: 0px;
+}
+
+.month {
+  width: 60px;
+  text-align: center;
+  padding: 1px;
+  background-color: #fdfefe;
+  box-sizing: border-box;
+  margin: 1px;
+  color: #000;
+}
+
+.month.selected {
+  background-color: #f0f3f4;
+  font-weight: bold;
+}
+
+select {
+  padding: 0px;
+  background-color: transparent;
+  color: #000;
+  border: none;
+  display: block;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+}
+
+select option {
+  background-color: #F9F6EE;
+}

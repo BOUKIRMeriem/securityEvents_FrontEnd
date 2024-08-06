@@ -1,0 +1,102 @@
+<div style="display: flex; flex-direction: row; background-color: #F9F6EE; height: 100vh; overflow-y: auto;gap: 20px;">
+    <div style="display: flex;  flex-direction: column; width: 100%;">
+        <select [value]="currentMode" (change)="onModeChange($event)" style="width: 110px; margin:20px;">
+            <option value="global">Global</option>
+            <option value="availability">Availability</option>
+            <option value="quality">Quality</option>
+            <option value="machineA">machine A</option>
+            <option value="machineQ">machine Q</option>
+        </select>
+        <select style="width: 100px;left: 0;margin: 10px;">
+            <option value="machine1">machine 1</option>
+            <option value="machine2">machine 2</option>
+            <option value="machine3">machine 3</option>
+            <option value="machine4">machine 4</option>
+        </select>
+        <div class="card card-stats mb-1 mt-1"
+            style=" width: 80%;margin: auto; border-radius: 15px; border: 1px solid white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);background-color: white;">
+            <div class="card-body">
+                <p style="color: black;">Date</p>
+                <div class="date-slider-container">
+                    <select name="year" id="year" (change)="onChangeYear($event)">
+                        <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+                    </select>
+                    <div class="months">
+                        <div *ngFor="let month of months; let i = index" [class.selected]="i === selectedMonthIndex"
+                            (click)="onMonthSelect(i)" class="month">
+                            {{ month }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="display: flex;flex-direction: row; gap: 15px;height: 44%;">
+            <div style="display: flex;flex-direction: column; gap: 5px; width: 28%;">
+                <div class="card card-stats mb-0"
+                    style="height: 55%; margin-left: 10px; border-radius: 5px; border: 1px solid white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);background-color: white;">
+                    <div class="card-body">
+                        <h6 style="color: black;">OEE</h6>
+                        <apx-chart [series]="OEE.series" [chart]="OEE.chart" [plotOptions]="OEE.plotOptions"
+                            [colors]="OEE.colors"></apx-chart>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: row; gap: 10px;height: 42%; margin-left: 10px;">
+                    <div class="card card-stats mb-2 mt-0"
+                        style="flex: 1; border-radius: 10px; border: 1px solid white; background-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                        <div class="card-body">
+                            <h6 style="color: black;">A</h6>
+                            <apx-chart [grid]="A.grid" [series]="A.series" [chart]="A.chart"
+                                [plotOptions]="A.plotOptions" [colors]="A.colors"></apx-chart>
+                        </div>
+                    </div>
+                    <div class="card card-stats mb-2 mt-0"
+                        style="flex: 1; border-radius: 10px; border: 1px solid white; background-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                        <div class="card-body">
+                            <h6 style="color: black;">Q</h6>
+                            <apx-chart [grid]="Q.grid" [series]="Q.series" [chart]="Q.chart"
+                                [plotOptions]="Q.plotOptions" [colors]="Q.colors"></apx-chart>
+                        </div>
+                    </div>
+                    <div class="card card-stats mb-2 mt-0"
+                        style="flex: 1; border-radius: 10px; border: 1px solid white; background-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                        <div class="card-body">
+                            <h6 style="color: black;">P</h6>
+                            <apx-chart [grid]="P.grid" [series]="P.series" [chart]="P.chart"
+                                [plotOptions]="P.plotOptions" [colors]="P.colors"></apx-chart>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-stats mb-2"
+                style="width: 70%; border-radius: 5px; border: 1px solid white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);background-color: white;">
+                <div class="card-body">
+                    <apx-chart [series]="OEEDay.series" [chart]="OEEDay.chart" [dataLabels]="OEEDay.dataLabels"
+                        [stroke]="OEEDay.stroke" [title]="OEEDay.title" [xaxis]="OEEDay.xaxis" [yaxis]="OEEDay.yaxis"
+                        [markers]="OEEDay.markers" [colors]="OEEDay.colors" [legend]="OEEDay.legend">
+                    </apx-chart>
+                </div>
+            </div>
+        </div>
+        <div style="display: flex; flex-direction: row; gap: 10px; height: 42%;">
+            <div class="card card-stats mb-1"
+                style=" width: 40%; margin-left: 10px; border-radius: 5px; border: 1px solid white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);background-color: white;">
+                <div class="card-body">
+                    <apx-chart [series]="perTeam.series" [chart]="perTeam.chart" [dataLabels]="perTeam.dataLabels"
+                   [xaxis]="perTeam.xaxis" [yaxis]="perTeam.yaxis"
+                   [title]="perTeam.title" [legend]="perTeam.legend" [colors]="perTeam.colors">
+                    </apx-chart>
+                </div>
+            </div>
+            <div class="card card-stats"
+                style=" width: 58%; border-radius: 5px; border: 1px solid white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);background-color: white;">
+                <div class="card-body">
+                    <apx-chart [series]="dayTeam.series" [chart]="dayTeam.chart" [responsive]="dayTeam.responsive"
+                        [plotOptions]="dayTeam.plotOptions" [xaxis]="dayTeam.xaxis" [legend]="dayTeam.legend"
+                        [fill]="dayTeam.fill" [title]="dayTeam.title" [colors]="dayTeam.colors"
+                        [dataLabels]="dayTeam.dataLabels" [yaxis]="dayTeam.yaxis" [grid]="dayTeam.grid">
+                    </apx-chart>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

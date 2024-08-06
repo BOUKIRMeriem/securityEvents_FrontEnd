@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { ModeService } from '../services/mode.service';
-
+import { ModeService } from 'src/app/services/mode.service';
 @Component({
   selector: 'app-parent',
   templateUrl: './parent.component.html',
@@ -9,7 +8,7 @@ import { ModeService } from '../services/mode.service';
 export class ParentComponent {
   selectedMode: string;
 
-  constructor(private modeService: ModeService) {}
+  constructor(private modeService: ModeService) { }
 
   ngOnInit(): void {
     this.modeService.mode$.subscribe(mode => this.selectedMode = mode);
