@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModeService } from 'src/app/services/mode.service';
 import { DashboardGlobalService } from 'src/app/services/dashboard/dashboardGlobal.service';
+
 import {
   ApexAxisChartSeries,
   ApexPlotOptions,
@@ -50,37 +51,68 @@ export class DashboardGlobalComponent implements OnInit {
   public OEEDay: Partial<ChartOptions>;
   public perTeam: Partial<ChartOptions>;
   years: number[] = [];
-  months: string[] = [];
+  months: any[] = [];
   selectedYear: number;
   selectedMonthIndex: number;
   currentMode: string;
+  machines: any[] = [];
+  selectedMachineId: number;
+  showChart: boolean = false;
+  showOEEPerDayTeam: boolean = false;
+  showOEEPerTeam: boolean = false;
 
+  constructor(private modeService: ModeService, private dashboardGlobalService: DashboardGlobalService) { }
 
-  constructor(private modeService: ModeService) {
-    this.oEE();
-    this.performance();
-    this.quality();
-    this.availability();
-    this.perDayTeam();
-    this.oEEday();
-    this.OEEperTeam();
-  }
   ngOnInit() {
-    const currentYear = new Date().getFullYear();
-    const currentMonthIndex = new Date().getMonth();
-    this.selectedYear = currentYear;
-    this.selectedMonthIndex = currentMonthIndex;
+    this.selectedYear = new Date().getFullYear();
+    this.selectedMonthIndex = new Date().getMonth();
     for (let i = 0; i <= 100; i++) {
-      this.years.push(currentYear - i);
+      this.years.push(new Date().getFullYear() - i);
     }
-    this.getMonthsForYear(this.selectedYear);
     this.modeService.modee$.subscribe(mode => {
       this.currentMode = mode;
     });
+    this.getMonthsForYear(this.selectedYear);
+    this.getAllMachine();
+
   }
-  oEE() {
+// Récupère la liste des machines et les stocke dans la variable `machines`.
+  getAllMachine() {
+    this.dashboardGlobalService.getAllMachine().subscribe(
+      (data) => {
+        this.machines = data;
+        if (this.machines.length > 0) {
+          this.selectedMachineId = this.machines[0].id;
+          this.getTRSGlobal(this.selectedYear, this.selectedMonthIndex + 1, this.selectedMachineId);
+          this.getTRSByDay(this.selectedYear, this.selectedMonthIndex + 1, this.selectedMachineId);
+          this.getGoodAndBadQuality(this.selectedYear, this.selectedMonthIndex + 1, this.selectedMachineId);
+        }
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+// Récupère les moyennes de TRS , qualité, performance et disponibilité 
+// pour l'année, le mois et la machine spécifiés. 
+// Les données reçues sont ensuite utilisées pour calculer les indicateurs OEE, qualité, disponibilité et performance.
+  getTRSGlobal(year: number, month: number, machineId: number) {
+    this.dashboardGlobalService.getTRSGlobal(year, month, machineId).subscribe(
+      (data: any) => {
+        console.log('Données reçues pour TRS Moyenne:', data);
+        this.oEE(data);
+        this.quality(data);
+        this.availability(data);
+        this.performance(data);
+      },
+      (error) => {
+        console.error('Erreur lors de la récupération des données:', error);
+      }
+    );
+  }
+  oEE(data: any) {
     this.OEE = {
-      series: [85],
+      series: [data.oee],
       chart: {
         height: 200,
         type: "radialBar",
@@ -96,9 +128,9 @@ export class DashboardGlobalComponent implements OnInit {
               show: false
             },
             value: {
-              fontSize: '45px',
+              fontSize: '30px',
               show: true,
-              offsetY: 15,
+              offsetY: 10,
               color: '#000'
             }
           }
@@ -107,46 +139,9 @@ export class DashboardGlobalComponent implements OnInit {
       colors: ["#40E0D0"],
     };
   }
-  performance() {
-    this.P = {
-      series: [97],
-      chart: {
-        height: 110,
-        type: "radialBar",
-      },
-      plotOptions: {
-        radialBar: {
-          hollow: {
-            size: "62%"
-          },
-          dataLabels: {
-            show: true,
-            name: {
-              show: false
-            },
-            value: {
-              fontSize: '20px',
-              show: true,
-              offsetY: 5,
-              color: '#000'
-            }
-          }
-        }
-      },
-      colors: ["#40E0D0"],
-      grid: {
-        padding: {
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0
-        }
-      }
-    };
-  }
-  quality() {
+  quality(data: any) {
     this.Q = {
-      series: [93],
+      series: [data.quality],
       chart: {
         height: 110,
         type: "radialBar",
@@ -162,7 +157,7 @@ export class DashboardGlobalComponent implements OnInit {
               show: false
             },
             value: {
-              fontSize: '20px',
+              fontSize: '18px',
               show: true,
               offsetY: 5,
               color: '#000'
@@ -181,9 +176,9 @@ export class DashboardGlobalComponent implements OnInit {
       }
     };
   }
-  availability() {
+  availability(data: any) {
     this.A = {
-      series: [95],
+      series: [data.availability],
       chart: {
         height: 110,
         type: "radialBar",
@@ -199,7 +194,7 @@ export class DashboardGlobalComponent implements OnInit {
               show: false
             },
             value: {
-              fontSize: '20px',
+              fontSize: '18px',
               show: true,
               offsetY: 5,
               color: '#000'
@@ -218,24 +213,95 @@ export class DashboardGlobalComponent implements OnInit {
       }
     };
   }
-  oEEday() {
+  performance(data: any) {
+    this.P = {
+      series: [data.performance],
+      chart: {
+        height: 110,
+        type: "radialBar",
+      },
+      plotOptions: {
+        radialBar: {
+          hollow: {
+            size: "62%"
+          },
+          dataLabels: {
+            show: true,
+            name: {
+              show: false
+            },
+            value: {
+              fontSize: '18px',
+              show: true,
+              offsetY: 5,
+              color: '#000'
+            }
+          }
+        }
+      },
+      colors: ["#40E0D0"],
+      grid: {
+        padding: {
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0
+        }
+      }
+    };
+  }
+// Récupère les moyennes de TRS , qualité, performance et disponibilité 
+// par jour pour l'année, le mois et la machine spécifiés.
+// Les données reçues sont ensuite utilisées pour calculer les indicateurs OEE par jour.
+  getTRSByDay(year: number, month: number, machineId: number) {
+    this.dashboardGlobalService.getTRSByDay(year, month, machineId).subscribe(
+      (data: any) => {
+        console.log('Données reçues:', data);
+        this.oEEday(data);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+  oEEday(data: any) {
+    const oeeData: number[] = [];
+    const availabilityData: number[] = [];
+    const qualityData: number[] = [];
+    const performanceData: number[] = [];
+    const categories: string[] = [];
+
+    if (data.length === 0) {
+      this.showChart = false;
+      return;
+    }
+    data.forEach((item: any) => {
+      oeeData.push(item.oee);
+      availabilityData.push(item.availability);
+      qualityData.push(item.quality);
+      performanceData.push(item.performance);
+      categories.push(new Date(item.date).toLocaleDateString("fr-FR"));
+    });
+
+    const isSingleDataPoint = (dataSet: number[]) => dataSet.length === 1;
+
     this.OEEDay = {
       series: [
         {
           name: "OEE",
-          data: [86, 80, 80, 80, 85]
+          data: oeeData
         },
         {
           name: "A",
-          data: [88, 82, 84, 83, 87]
+          data: availabilityData
         },
         {
           name: "Q",
-          data: [90, 85, 87, 86, 89]
+          data: qualityData
         },
         {
           name: "P",
-          data: [85, 79, 78, 81, 84]
+          data: performanceData
         }
       ],
       chart: {
@@ -251,13 +317,18 @@ export class DashboardGlobalComponent implements OnInit {
       },
       colors: ["#00FFFF", "#FF0000", "#00FF00", "#0000FF"],
       stroke: {
-        curve: "straight",
-        width: [5, 1, 1, 1]
+        curve: "smooth",
+        width: [
+          isSingleDataPoint(oeeData) ? 0 : 5,
+          isSingleDataPoint(availabilityData) ? 0 : 1,
+          isSingleDataPoint(qualityData) ? 0 : 1,
+          isSingleDataPoint(performanceData) ? 0 : 1
+        ]
       },
       title: {
         text: "OEE day",
         align: "center",
-        offsetY: 20,
+        offsetY: 22,
         style: {
           color: "#000",
           fontSize: '14px',
@@ -266,13 +337,7 @@ export class DashboardGlobalComponent implements OnInit {
         margin: 0
       },
       xaxis: {
-        categories: [
-          "01/07/2024",
-          "02/07/2024",
-          "03/07/2024",
-          "04/07/2024",
-          "05/07/2024"
-        ],
+        categories: categories,
         axisBorder: {
           show: true,
           color: "#000"
@@ -322,7 +387,12 @@ export class DashboardGlobalComponent implements OnInit {
         }
       },
       markers: {
-        size: [4, 0, 0, 0],
+        size: [
+          isSingleDataPoint(oeeData) ? 5 : 4,
+          isSingleDataPoint(availabilityData) ? 5 : 0,
+          isSingleDataPoint(qualityData) ? 5 : 0,
+          isSingleDataPoint(performanceData) ? 5 : 0
+        ],
         colors: ["#00FFFF", "#FF0000", "#00FF00", "#0000FF"],
         strokeColors: 'white',
         strokeWidth: 1,
@@ -337,19 +407,58 @@ export class DashboardGlobalComponent implements OnInit {
           colors: "#000",
         },
       },
-
     };
+    this.showChart = true;
   }
-  perDayTeam() {
+// Récupère les données sur la qualité (conformes et non conformes) 
+// pour l'année, le mois et la machine spécifiés, regroupées par équipe.
+  getGoodAndBadQuality(year: number, month: number, machineId: number) {
+    this.dashboardGlobalService.getGoodAndBadQuality(year, month, machineId).subscribe(
+      (data) => {
+        console.log('Données reçues pour TRS Moyenne:', data);
+        this.perDayTeam(data);
+        this.OEEperTeam(data);
+      },
+      (error) => {
+        console.error('Erreur lors de la récupération des données:', error);
+
+      }
+
+    );
+  }
+  perDayTeam(data: any) {
+    const good: number[] = [];
+    const bad: number[] = [];
+    const categories: string[] = [];
+
+    if (data.length === 0) {
+      this.showOEEPerDayTeam = false;
+      return;
+    }
+
+    // Trier les données par date
+    data.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    data.forEach((item: any) => {
+      good.push(item.good);
+      bad.push(item.bad);
+
+      // Combinez la date et l'entité en une seule chaîne
+      const dateStr = new Date(item.date).toLocaleDateString("fr-FR");
+      const combined = `${dateStr} (${item.entity})`;
+
+      categories.push(combined);
+    });
+
     this.dayTeam = {
       series: [
         {
           name: "OK parts produced-Sum",
-          data: [8000, 8000, 8000, 8000, 8000, 8000, 8000]
+          data: good
         },
         {
           name: "Loss-Sum",
-          data: [2000, 2000, 2000, 2000, 2000, 2000, 2000]
+          data: bad
         }
       ],
       chart: {
@@ -372,15 +481,7 @@ export class DashboardGlobalComponent implements OnInit {
       },
       xaxis: {
         type: "category",
-        categories: [
-          "01/07/2023",
-          "02/07/2023",
-          "03/07/2023",
-          "04/07/2023",
-          "05/07/2023",
-          "06/07/2023",
-          "07/07/2023"
-        ],
+        categories: categories,
         axisBorder: {
           show: true,
           color: "#000"
@@ -445,46 +546,48 @@ export class DashboardGlobalComponent implements OnInit {
         }
       },
     };
+    this.showOEEPerDayTeam = true;
   }
-  onChangeYear(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    this.selectedYear = parseInt(target.value, 10);
-    this.getMonthsForYear(this.selectedYear);
-  }
-  getMonthsForYear(selectedYear: number) {
-    this.months = [];
-    for (let i = 0; i < 12; i++) {
-      const date = new Date(selectedYear, i, 1);
-      const monthName = date.toLocaleString('default', { month: 'short' });
-      this.months.push(monthName);
+  OEEperTeam(data: any) {
+    if (data.length === 0) {
+      this.showOEEPerTeam = false;
+      return;
     }
-  }
-  onMonthSelect(index: number) {
-    this.selectedMonthIndex = index;
-  }
-  onModeChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    this.modeService.setModeDashboard(target.value);
+    const groupedData: { [key: string]: { good: number, bad: number } } = {};
+    data.forEach((item: any) => {
+      if (!groupedData[item.entity]) {
+        groupedData[item.entity] = { good: 0, bad: 0 };
+      }
+      groupedData[item.entity].good += item.good;
+      groupedData[item.entity].bad += item.bad;
+    });
+    const good: number[] = [];
+    const bad: number[] = [];
+    const okPartsTarget: number[] = [];
+    const categories: string[] = [];
 
-  }
-  OEEperTeam() {
-    const okPartsProduced = 8000;
-    const lossParts = 2000;
-    const okPartsTarget = okPartsProduced + lossParts;
-  
+    for (const entity in groupedData) {
+      categories.push(entity);
+      good.push(groupedData[entity].good);
+      bad.push(groupedData[entity].bad);
+      okPartsTarget.push(groupedData[entity].good + groupedData[entity].bad);
+    }
     this.perTeam = {
       series: [
         {
           name: "ok-Parts-Target",
-          data: [okPartsTarget]
+          data: okPartsTarget,
+          type: "bar",
         },
         {
           name: "ok-parts-produced",
-          data: [okPartsProduced]
+          data: good,
+          type: "bar",
         },
         {
           name: "Loss-Parts",
-          data: [lossParts]
+          data: bad,
+          type: "bar",
         }
       ],
       chart: {
@@ -500,7 +603,7 @@ export class DashboardGlobalComponent implements OnInit {
       title: {
         text: "OEE per Team",
         align: "center",
-        offsetY: 5,
+        offsetY: 10,
         style: {
           color: "#000",
           fontSize: '12px',
@@ -519,57 +622,87 @@ export class DashboardGlobalComponent implements OnInit {
         },
       },
       xaxis: {
-        categories: [
-          "AM"
-        ],
+        categories: categories,
       },
       legend: {
         position: 'top',
+        offsetY: -5,
         labels: {
           colors: "#000",
+
         },
       },
       yaxis: [
         {
+          opposite: false,
           labels: {
             style: {
               colors: "#000",
             },
             offsetX: -10,
           },
-          tickAmount: 6,
-          min: 0,
-          max: 12000,
         },
-        {
-          opposite: true,
-          labels: {
-            formatter: function (value: number) {
-              // Calculate the percentage based on the maximum value of the primary axis
-              const percentage = (value / 12000) * 100;
-              return percentage.toFixed(0) + "%";
-            },
-            style: {
-              colors: "#000",
-            },
-            offsetX: -5,
-          },
-          tickAmount: 10,
-          min: 0,
-          max: 12000,
-        }
+        // {
+        //   opposite: true,
+        //   labels: {
+        //     formatter: function (value: number) {
+        //       return value.toFixed(0) + "%";
+        //     },
+        //     style: {
+        //       colors: "#000",
+        //     },
+        //     offsetX: -5,
+        //   },
+        //   tickAmount: 10,
+        //   min: 0,
+        //   max: 100,
+        // }
       ]
+
     };
+    this.showOEEPerTeam = true;
   }
   
-  
-  
+  onMachineSelect(event: any) {
+    this.selectedMachineId = event.target.value;
+   this.updateChart();
+  }
+  onChangeYear(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    this.selectedYear = parseInt(target.value, 10);
+    this.getMonthsForYear(this.selectedYear);
+    this.updateChart();
+  }
+  getMonthsForYear(selectedYear: number) {
+    this.months = [];
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth();
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(selectedYear, i, 1);
+      const monthName = date.toLocaleString('default', { month: 'short' });
+      let isAccessible: boolean;
+      if (selectedYear === currentYear) {
+        isAccessible = i <= currentMonth;
+      } else if (selectedYear < currentYear) {
+        isAccessible = true;
+      }
+      this.months.push({ name: monthName, isAccessible });
+    }
+  }
+  onMonthSelect(index: number) {
+    this.selectedMonthIndex = index;
+    this.updateChart();
+  }
+  updateChart() {
+    if (this.selectedMachineId) {
+      this.getTRSByDay(this.selectedYear, this.selectedMonthIndex + 1, this.selectedMachineId);
+      this.getTRSGlobal(this.selectedYear, this.selectedMonthIndex + 1, this.selectedMachineId);
+      this.getGoodAndBadQuality(this.selectedYear, this.selectedMonthIndex + 1, this.selectedMachineId);
+
+    }
+  }
+  onModeChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    this.modeService.setModeDashboard(target.value);
+  }
 }
-
-
-
-
-
-  
-
-

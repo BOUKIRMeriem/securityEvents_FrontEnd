@@ -1,0 +1,53 @@
+<div style="display: flex; flex-direction: column; background-color: #F9F6EE; height: 100vh; overflow-y: auto;">
+  <div class="card card-stats mb-1 mt-1"
+    style="width: 80%; margin: auto; border-radius: 15px; border: 1px solid white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: white;">
+    <div class="card-body">
+      <p style="color: black;">Date</p>
+      <div class="date-slider-container">
+        <select name="year" id="year" (change)="onChangeYear($event)">
+          <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+        </select>
+        <div class="months">
+          <div *ngFor="let month of months; let i = index" [class.selected]="i === selectedMonthIndex"
+            [class.disabled]="!month.isAccessible" (click)="month.isAccessible ? onMonthSelect(i) : null" class="month">
+            {{ month.name }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Select for mode -->
+  <div style="display: flex; flex-direction: row; gap: 25px; margin-left: 15px; margin-top: 10px;">
+    <select [value]="currentMode" (change)="onModeChange($event)" style="width: 110px; margin: 20px;">
+      <option value="global">Global</option>
+      <option value="availability">Availability</option>
+      <option value="quality">Quality</option>
+      <option value="entity">Entity</option>
+      =
+    </select>
+    <select style="width: 100px;left: 0;margin: 10px;" (change)="onEntitySelect($event)">
+      <option *ngFor="let entity of entities" [value]="entity">
+        {{ entity }}
+      </option>
+    </select>
+
+  </div>
+
+  <!-- Display charts for each machine -->
+  <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-left: 10px;">
+    <div *ngFor="let machine of machines" style="width: calc(50% - 20px);">
+      <div class="card card-stats mb-0 mt-0"
+        style="border-radius: 15px; border: 1px solid white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 100%; height: 90%; background-color: white;">
+        <div class="card-body" style="padding: 0;">
+          <apx-chart [series]="chartOptions[machine]?.series" [colors]="chartOptions[machine]?.colors"
+            [chart]="chartOptions[machine]?.chart" [xaxis]="chartOptions[machine]?.xaxis"
+            [yaxis]="chartOptions[machine]?.yaxis" [dataLabels]="chartOptions[machine]?.dataLabels"
+            [grid]="chartOptions[machine]?.grid" [stroke]="chartOptions[machine]?.stroke"
+            [markers]="chartOptions[machine]?.markers" [tooltip]="chartOptions[machine]?.tooltip"
+            [title]="chartOptions[machine]?.title"></apx-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

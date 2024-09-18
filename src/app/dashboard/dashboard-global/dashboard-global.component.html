@@ -4,16 +4,14 @@
             <option value="global">Global</option>
             <option value="availability">Availability</option>
             <option value="quality">Quality</option>
-            <option value="machineA">machine A</option>
-            <option value="machineQ">machine Q</option>
+            <option value="entity">Entity</option>
         </select>
-        <select style="width: 100px;left: 0;margin: 10px;">
-            <option value="machine1">machine 1</option>
-            <option value="machine2">machine 2</option>
-            <option value="machine3">machine 3</option>
-            <option value="machine4">machine 4</option>
+        <select style="width: 100px;left: 0;margin: 10px;" (change)="onMachineSelect($event)">
+            <option *ngFor="let machine of machines" [value]="machine.id">
+                {{ machine.designation_machine }}
+            </option>
         </select>
-        <div class="card card-stats mb-1 mt-1"
+        <div class="card card-stats mb-2 mt-1"
             style=" width: 80%;margin: auto; border-radius: 15px; border: 1px solid white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);background-color: white;">
             <div class="card-body">
                 <p style="color: black;">Date</p>
@@ -23,8 +21,9 @@
                     </select>
                     <div class="months">
                         <div *ngFor="let month of months; let i = index" [class.selected]="i === selectedMonthIndex"
-                            (click)="onMonthSelect(i)" class="month">
-                            {{ month }}
+                            [class.disabled]="!month.isAccessible"
+                            (click)="month.isAccessible ? onMonthSelect(i) : null" class="month">
+                            {{ month.name }}
                         </div>
                     </div>
                 </div>
@@ -68,33 +67,45 @@
                 </div>
             </div>
             <div class="card card-stats mb-2"
-                style="width: 70%; border-radius: 5px; border: 1px solid white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);background-color: white;">
+                style="width: 70%; border-radius: 5px; border: 1px solid white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: white;">
                 <div class="card-body">
-                    <apx-chart [series]="OEEDay.series" [chart]="OEEDay.chart" [dataLabels]="OEEDay.dataLabels"
-                        [stroke]="OEEDay.stroke" [title]="OEEDay.title" [xaxis]="OEEDay.xaxis" [yaxis]="OEEDay.yaxis"
-                        [markers]="OEEDay.markers" [colors]="OEEDay.colors" [legend]="OEEDay.legend">
-                    </apx-chart>
+                    <div *ngIf="showChart; else noData">
+                        <apx-chart [series]="OEEDay.series" [chart]="OEEDay.chart" [dataLabels]="OEEDay.dataLabels"
+                            [stroke]="OEEDay.stroke" [title]="OEEDay.title" [xaxis]="OEEDay.xaxis"
+                            [yaxis]="OEEDay.yaxis" [markers]="OEEDay.markers" [colors]="OEEDay.colors"
+                            [legend]="OEEDay.legend">
+                        </apx-chart>
+                    </div>
                 </div>
             </div>
+            <ng-template #noData>
+                <div class="no-data-message">
+                    No data available.
+                </div>
+            </ng-template>
         </div>
         <div style="display: flex; flex-direction: row; gap: 10px; height: 42%;">
             <div class="card card-stats mb-1"
                 style=" width: 40%; margin-left: 10px; border-radius: 5px; border: 1px solid white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);background-color: white;">
                 <div class="card-body">
-                    <apx-chart [series]="perTeam.series" [chart]="perTeam.chart" [dataLabels]="perTeam.dataLabels"
-                   [xaxis]="perTeam.xaxis" [yaxis]="perTeam.yaxis"
-                   [title]="perTeam.title" [legend]="perTeam.legend" [colors]="perTeam.colors">
-                    </apx-chart>
+                    <div *ngIf="showOEEPerTeam;else noData">
+                        <apx-chart [series]="perTeam.series" [chart]="perTeam.chart" [dataLabels]="perTeam.dataLabels"
+                            [xaxis]="perTeam.xaxis" [yaxis]="perTeam.yaxis" [title]="perTeam.title"
+                            [legend]="perTeam.legend" [colors]="perTeam.colors">
+                        </apx-chart>
+                    </div>
                 </div>
             </div>
-            <div class="card card-stats"
-                style=" width: 58%; border-radius: 5px; border: 1px solid white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);background-color: white;">
+            <div class="card card-stats mb-1"
+                style=" width: 58%;margin-right: 10px; border-radius: 5px; border: 1px solid white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);background-color: white;">
                 <div class="card-body">
-                    <apx-chart [series]="dayTeam.series" [chart]="dayTeam.chart" [responsive]="dayTeam.responsive"
-                        [plotOptions]="dayTeam.plotOptions" [xaxis]="dayTeam.xaxis" [legend]="dayTeam.legend"
-                        [fill]="dayTeam.fill" [title]="dayTeam.title" [colors]="dayTeam.colors"
-                        [dataLabels]="dayTeam.dataLabels" [yaxis]="dayTeam.yaxis" [grid]="dayTeam.grid">
-                    </apx-chart>
+                    <div *ngIf="showOEEPerDayTeam; else noData">
+                        <apx-chart [series]="dayTeam.series" [chart]="dayTeam.chart" [responsive]="dayTeam.responsive"
+                            [plotOptions]="dayTeam.plotOptions" [xaxis]="dayTeam.xaxis" [legend]="dayTeam.legend"
+                            [fill]="dayTeam.fill" [title]="dayTeam.title" [colors]="dayTeam.colors"
+                            [dataLabels]="dayTeam.dataLabels" [yaxis]="dayTeam.yaxis" [grid]="dayTeam.grid">
+                        </apx-chart>
+                    </div>
                 </div>
             </div>
         </div>

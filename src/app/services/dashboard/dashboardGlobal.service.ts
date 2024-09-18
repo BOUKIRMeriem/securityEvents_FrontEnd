@@ -1,30 +1,64 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { OeeDay } from '../../models/dashboardGlobal/oee-day';
 import { Observable } from 'rxjs';
-import { OeePerDayTeam } from '../../models/dashboardGlobal/oee-per-day-team';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardGlobalService {
-private urlBase1 ="http://localhost:8080/oeeDay"
-private urlBase2 = 'http://localhost:8080/oeePerDayTeam';
+
 
   constructor(private http: HttpClient) { }
 
-  addOEEDay(oeeDay : OeeDay) :Observable<OeeDay>{
-    return this.http.post<OeeDay>(`${this.urlBase1}`,oeeDay);
+//global
+  getTRSGlobal(year: number, month: number, machineId: number): Observable<any[]> {
+    return this.http.get<any[]>(`http://localhost:8080/TRS/global/${year}/${month}/${machineId}`);
   }
-  getOEEDayByMonth(month : number){
-    return this.http.get<Array<OeeDay>>(`${this.urlBase1}/month/${month}`);
+  getTRSByDay(year: number, month: number, machineId: number): Observable<any[]> {
+    return this.http.get<any[]>(`http://localhost:8080/TRS/day/${year}/${month}/${machineId}`);
   }
-  addOEEPerDayTeam(oeePerDayTeam : OeePerDayTeam):Observable<OeePerDayTeam>{
-    return this.http.post<OeePerDayTeam>(`${this.urlBase2}`, oeePerDayTeam);
+  getAllMachine(): Observable<any[]> {
+    return this.http.get<any[]>(`http://localhost:8080/machine`);
   }
-  getOEEPerDayTeamByMonth(month: number) {
-    return this.http.get<Array<OeePerDayTeam>>(`${this.urlBase2}/month/${month}`);
+  getGoodAndBadQuality(year:number , month: number , machineId : number):Observable<any[]>{
+    return this.http.get<any[]>(`http://localhost:8080/TRS/${year}/${month}/${machineId}`);
   }
-  
+  //availability
+  getFailureType(year:number , month: number , machineId : number):Observable<any[]>{
+    return this.http.get<any[]>(`http://localhost:8080/arretsMachine/global/${year}/${month}/${machineId}`);
+  }
+  getFailureTypeByMonth(year:number , month: number , machineId : number):Observable<any[]>{
+    return this.http.get<any[]>(`http://localhost:8080/arretsMachine/day/${year}/${month}/${machineId}`);
+  }
+  calculateAvailability(year:number , month: number):Observable<any[]>{
+    return this.http.get<any[]>(`http://localhost:8080/arretsMachine/availability/${year}/${month}`);
+  }
+  getCauses(year:number , month: number,machineId : number):Observable<any[]>{
+    return this.http.get<any[]>(`http://localhost:8080/arretsMachine/causes/${year}/${month}/${machineId}`);
+  }
+  getCausesTracking(year:number ,machineId : number):Observable<any[]>{
+    return this.http.get<any[]>(`http://localhost:8080/arretsMachine/causesTracking/${year}/${machineId}`);
+  }
+  //quality
+  getCards(year:number , month: number,machineId : number):Observable<any[]>{
+    return this.http.get<any[]>(`http://localhost:8080/quality/${year}/${month}/${machineId}`);
+  }
+  getCardsByDate(year:number , month: number,machineId : number):Observable<any[]>{
+    return this.http.get<any[]>(`http://localhost:8080/quality/date/${year}/${month}/${machineId}`);
+  }
+  getQualityByMachine(year:number ,month:number):Observable<any[]>{
+    return this.http.get<any[]>(`http://localhost:8080/quality/${year}/${month}`);
+  }
+  getOperationBYQuality(year:number,month :number,machineId:number):Observable<any[]>{
+    return this.http.get<any[]>(`http://localhost:8080/quality/operation/${year}/${month}/${machineId}`);
+  }
+  getOperationBYQualityAndMonth(year:number,machineId:number):Observable<any[]>{
+    return this.http.get<any[]>(`http://localhost:8080/quality/operation/month/${year}/${machineId}`);
+  }
+  //entity
+  getTrsByEntity(year:number,month:number, entity:string):Observable<any[]>{
+    return this.http.get<any[]>(`http://localhost:8080/TRS/entity/${year}/${month}/${entity}`);
+  }
+
 
 }

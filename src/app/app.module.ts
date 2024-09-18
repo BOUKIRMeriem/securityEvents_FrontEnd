@@ -13,8 +13,7 @@ import { CercleComponent } from './calender/cercle/cercle.component';
 import { ParentComponent } from './calender/parent/parent.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { Parent1Component } from './dashboard/parent1/parent1.component';
-import { MachineAComponent } from './dashboard/machine-a/machine-a.component';
-import { MachineQComponent } from './dashboard/machine-q/machine-q.component';
+import { EntityComponent } from './dashboard/entity/entity.component';
 import { DashboardGlobalComponent } from './dashboard/dashboard-global/dashboard-global.component';
 import { DashbordAvailabilityComponent } from './dashboard/dashbord-availability/dashbord-availability.component';
 import { DashbordQualityComponent } from './dashboard/dashbord-quality/dashbord-quality.component';
@@ -29,8 +28,7 @@ import { DashbordQualityComponent } from './dashboard/dashbord-quality/dashbord-
     CercleComponent,
     ParentComponent,
     Parent1Component,
-    MachineAComponent,
-    MachineQComponent,
+    EntityComponent,
     DashboardGlobalComponent,
     DashbordAvailabilityComponent,
     DashbordQualityComponent

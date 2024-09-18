@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MachineQComponent } from './machine-q.component';
+import {EntityComponent } from './entity.component';
 
-describe('MachineQComponent', () => {
-  let component: MachineQComponent;
-  let fixture: ComponentFixture<MachineQComponent>;
+describe('MachineAComponent', () => {
+  let component: EntityComponent;
+  let fixture: ComponentFixture<EntityComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [MachineQComponent]
+      declarations: [EntityComponent]
     });
-    fixture = TestBed.createComponent(MachineQComponent);
+    fixture = TestBed.createComponent(EntityComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

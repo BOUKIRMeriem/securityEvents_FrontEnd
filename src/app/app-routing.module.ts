@@ -5,8 +5,7 @@ import { CroixSecuriteComponent } from './calender/croix-securite/croix-securite
 import { CercleComponent } from './calender/cercle/cercle.component';
 import { ParentComponent } from './calender/parent/parent.component';
 import { Parent1Component } from './dashboard/parent1/parent1.component';
-import { MachineAComponent } from './dashboard/machine-a/machine-a.component';
-import { MachineQComponent } from './dashboard/machine-q/machine-q.component';
+import { EntityComponent } from './dashboard/entity/entity.component';
 import { DashboardGlobalComponent } from './dashboard/dashboard-global/dashboard-global.component';
 import { DashbordAvailabilityComponent } from './dashboard/dashbord-availability/dashbord-availability.component';
 import { DashbordQualityComponent } from './dashboard/dashbord-quality/dashbord-quality.component';
@@ -21,8 +20,7 @@ const routes: Routes = [
   {path:'cercle' , component:CercleComponent},
   {path:'' , component:ParentComponent},
   {path:'dashboard', component:Parent1Component},
-  {path:'machineA' , component:MachineAComponent},
-  {path:'machineQ' , component:MachineQComponent},
+  {path:'entity' , component:EntityComponent},
   {path:'global' , component:DashboardGlobalComponent},
   {path:'availability' , component:DashbordAvailabilityComponent},
   {path:'quality' , component:DashbordQualityComponent},
